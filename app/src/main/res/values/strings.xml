@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">KotlinNote</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_choose_encoding">エンコード</string>
+    <string name="label_alertPermissionTitle">権限が必要です</string>
+    <string name="label_alertPermission">KotlinNote はファイルの操作に外部ストレージへのアクセス権限が必要です。</string>
+    <string name="label_chooseEncodingTitle">エンコードを選択</string>
+    <string name="label_grant">許可</string>
+    <string name="label_deny">拒否</string>
+    <string name="label_OK">OK</string>
+    <string name="label_Cancel">キャンセル</string>
+    <string name="label_name_to_save">名前をつけて保存</string>
+    <string name="msg_file_not_found">ファイルが見つかりません</string>
+    <string name="msg_cant_open_file">ファイルを開けません</string>
+    <string name="msg_permission_granted">権限が許可されました</string>
+    <string name="msg_file_opened">ファイルを開きました</string>
+    <string name="msg_confirm_overwrite">上書き保存します (スワイプでキャンセル)</string>
+    <string name="msg_saved">保存しました</string>
+
+    <string-array name="encodes">
+        <item>UTF-8</item>
+        <item>UTF-16</item>
+        <item>UTF-16BE</item>
+        <item>UTF-16LE</item>
+        <item>UTF-32</item>
+        <item>UTF-32BE</item>
+        <item>UTF-32LE</item>
+        <item>US_ASCII</item>
+        <item>ISO-8859-1</item>
+        <item>Shift-JIS</item>
+        <item>EUC-JP</item>
+    </string-array>
+</resources>
