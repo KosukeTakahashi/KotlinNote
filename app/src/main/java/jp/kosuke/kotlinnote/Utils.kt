@@ -96,7 +96,6 @@ class Utils {
 //                writer.write(content)
 //                writer.close()
 //                outStream.close()
-                // FileWriterとか使える？
                 Log.d(act.appname, "Streams closed.")
 
             }
