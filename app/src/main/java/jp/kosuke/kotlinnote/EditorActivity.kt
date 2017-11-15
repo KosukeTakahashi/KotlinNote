@@ -75,7 +75,6 @@ class EditorActivity : AppCompatActivity(), TextWatcher {
         }
         else if (requestCode == RequestCodes.NAME_TO_SAVE && resultCode == Activity.RESULT_OK) {
             Log.d(appname, "NAME_TO_SAVE")
-            // todo { SAF からの result をハンドリング }
             if (data != null) {
                 currentUri = data.data
                 utils.save(editor.text.toString(), currentUri, currentCharset)
