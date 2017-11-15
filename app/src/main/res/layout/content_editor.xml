@@ -54,7 +54,7 @@
                     android:paddingEnd="4dp"
                     android:gravity="top|start"
                     android:scrollHorizontally="true"
-                    android:background="@android:color/transparent"/>
+                    android:background="@android:color/transparent" />
             </HorizontalScrollView>
         </LinearLayout>
     </ScrollView>

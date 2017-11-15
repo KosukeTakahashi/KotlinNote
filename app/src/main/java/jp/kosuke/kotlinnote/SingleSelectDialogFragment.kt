@@ -20,9 +20,9 @@ class SingleSelectDialogFragment : DialogFragment() {
         builder.setTitle(R.string.label_chooseEncodingTitle)
                 .setSingleChoiceItems(R.array.encodes, getId(initial), DialogInterface.OnClickListener(
                         { _, which -> chosen = getCharsetCodes(which) }))
-                .setPositiveButton(R.string.label_OK, { _, _ ->
-                    act.currentCharset = chosen
-                    val content = Utils.read(act, act, act.currentUri, chosen)
+                .setPositiveButton(R.string.label_OK, {_, which ->
+                    val charset = getCharsetCodes(which)
+                    act.dialogCallback(charset)
                 })
 
         return builder.create()
