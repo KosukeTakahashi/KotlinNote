@@ -14,6 +14,7 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 
 import kotlinx.android.synthetic.main.activity_editor.*
 import kotlinx.android.synthetic.main.content_editor.*
@@ -60,9 +61,16 @@ class EditorActivity : AppCompatActivity(), TextWatcher {
         if (requestCode == RequestCodes.OPEN_FILE && resultCode == Activity.RESULT_OK) {
             if (data != null) {
                 Log.d(appname, "OPEN_FILE")
+
                 currentUri = data.data
                 val content = utils.read(currentUri, currentCharset)
                 editor.setText(content)
+
+                val lines = editor.lineCount
+                val text = utils.generateLineCounter(lines)
+                counter.text = text
+                currentLineCount = lines
+
                 Log.d(appname, "currentUri is $currentUri")
                 toolbar.subtitle = utils.getPathFromUri(currentUri)
                 Snackbar.make(editor, R.string.msg_file_opened, Snackbar.LENGTH_SHORT).show()
@@ -90,13 +98,12 @@ class EditorActivity : AppCompatActivity(), TextWatcher {
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == RequestCodes.PERMISSION && grantResults.isNotEmpty()) {
-            utils.requestStoragePermission()
-        }
-        else {
-            Snackbar.make(editor, R.string.msg_permission_granted, Snackbar.LENGTH_SHORT).show()
+        if (requestCode == RequestCodes.PERMISSION && grantResults.isNotEmpty()) {Snackbar.make(editor, R.string.msg_permission_granted, Snackbar.LENGTH_SHORT).show()
             val content = utils.read(currentUri, currentCharset)
             editor.setText(content)
+        }
+        else {
+            utils.requestStoragePermission()
         }
     }
 
@@ -132,6 +139,24 @@ class EditorActivity : AppCompatActivity(), TextWatcher {
         val path = utils.getPathFromUri(currentUri)
         toolbar.subtitle = path
 
+        val action = intent.action
+        val type = intent.type
+        currentUri =
+                if (Intent.ACTION_VIEW == action && type != null)
+                    intent.data
+                else
+                    Uri.fromFile(
+                            File(Environment.getExternalStorageDirectory(), "KotlinNote/newfile.txt")
+                    )
+
+        val content = utils.read(currentUri, currentCharset)
+        editor.setText(content)
+
+        val lines = editor.lineCount
+        val text = utils.generateLineCounter(lines)
+        counter.text = text
+        currentLineCount = lines
+
         fab.setOnClickListener { view ->
             Snackbar.make(view, R.string.msg_confirm_overwrite, Snackbar.LENGTH_SHORT)
                     .setAction(R.string.label_name_to_save, { _ ->
@@ -155,9 +180,8 @@ class EditorActivity : AppCompatActivity(), TextWatcher {
 
         editor.addTextChangedListener(this)
 
-        open_file.setOnClickListener { view ->
+        open_file.setOnClickListener { _ ->
             // SAF 呼び出し
-//            Snackbar.make(view, "Not Implemented", Snackbar.LENGTH_SHORT).show()
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
             intent.addCategory(Intent.CATEGORY_OPENABLE)
             intent.type = "*/*"
@@ -167,8 +191,14 @@ class EditorActivity : AppCompatActivity(), TextWatcher {
 
     // onActivityResult とかでやりたかった
     fun dialogCallback(charset: CharsetCodes) {
+        Log.d(appname, "dialogCallback called :: charset = $charset")
         currentCharset = charset
         val content = utils.read(currentUri, currentCharset)
         editor.setText(content)
+
+        val lines = editor.lineCount
+        val text = utils.generateLineCounter(lines)
+        counter.text = text
+        currentLineCount = lines
     }
 }
