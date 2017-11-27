@@ -1,7 +1,6 @@
 package jp.kosuke.kotlinnote
 
 import android.Manifest
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.ContentUris
 import android.content.Context
@@ -138,12 +137,14 @@ class Utils(val act: EditorActivity,
                 if ("primary" == type)
                     return Environment.getExternalStorageDirectory().path + "/" + split[1]
                 else
-                    return "/storage/" + type + "/" + split[1]
+                    return "/storage/$type/${split[1]}"
             }
             else if ("com.android.providers.downloads.documents" == uri.authority) {
+                Log.d("jp.kosuke.KotlinNote", "downloads @ getPathFromUri")
                 val id = DocumentsContract.getDocumentId(uri)
                 val contentUri = ContentUris.withAppendedId(
                         Uri.parse("context://downloads/public_downloads"), id.toLong())
+                Log.d("jp.kosuke.KotlinNote", "id = $id, contentUri = $contentUri")
                 return getDataCol(contentUri, null, null)
             }
             else if ("com.android.providers.media.documents" == uri.authority) {
@@ -165,15 +166,15 @@ class Utils(val act: EditorActivity,
         return ""
     }
 
-    private fun touch(newfile: File): File {
-        if (newfile.exists()) {
-            if (newfile.isFile && newfile.canWrite())
-                return newfile
+    fun touch(file: File): File {
+        if (file.exists()) {
+            if (file.isFile && file.canWrite())
+                return file
         }
         else {
             try {
-                Runtime.getRuntime().exec(arrayOf("mkdir", "-p", newfile.parent))
-                Runtime.getRuntime().exec(arrayOf("touch", newfile.absolutePath))
+                Runtime.getRuntime().exec(arrayOf("mkdir", "-p", file.parent))
+                Runtime.getRuntime().exec(arrayOf("touch", file.absolutePath))
             }
 
             catch(e: InterruptedException) {
@@ -181,7 +182,7 @@ class Utils(val act: EditorActivity,
             }
         }
 
-        return newfile
+        return file
     }
 
     private fun hasPermission(): Boolean {
@@ -197,10 +198,12 @@ class Utils(val act: EditorActivity,
         val cursor = context.contentResolver.query(
                 uri, projection, selection, selectionArgs, null)
 
-        cursor.use { cursor ->
-            if (cursor.moveToFirst()) {
-                val cindex = cursor.getColumnIndexOrThrow(projection[0])
-                return cursor.getString(cindex)
+        Log.d("jp.kosuke.KotlinNote", "cursor is $cursor")
+        cursor.use { csr ->
+            Log.d("jp.kosuke.KotlinNote", "csr is $csr")
+            if (csr.moveToFirst()) {
+                val cindex = csr.getColumnIndexOrThrow(projection[0])
+                return csr.getString(cindex)
             }
         }
 

@@ -24,11 +24,9 @@ class EditorActivity : AppCompatActivity(), TextWatcher {
 
     private lateinit var utils: Utils
     private var currentLineCount = 1
-    
+
+    lateinit var currentUri: Uri
     var currentCharset = CharsetCodes.UTF_8
-    var currentUri =
-            Uri.fromFile(File(
-                    Environment.getExternalStorageDirectory(), "KotlinNote/newfile.txt"))
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,6 +63,7 @@ class EditorActivity : AppCompatActivity(), TextWatcher {
                 currentUri = data.data
                 val content = utils.read(currentUri, currentCharset)
                 editor.setText(content)
+                Log.d(appname, "currentUri is $currentUri")
                 toolbar.subtitle = utils.getPathFromUri(currentUri)
                 Snackbar.make(editor, R.string.msg_file_opened, Snackbar.LENGTH_SHORT).show()
             }
@@ -77,6 +76,7 @@ class EditorActivity : AppCompatActivity(), TextWatcher {
             Log.d(appname, "NAME_TO_SAVE")
             if (data != null) {
                 currentUri = data.data
+                toolbar.subtitle = utils.getPathFromUri(currentUri)
                 utils.save(editor.text.toString(), currentUri, currentCharset)
                 Log.d(appname, "Saved @ onActivityResult : NAME_TO_SAVE")
             }
@@ -120,6 +120,15 @@ class EditorActivity : AppCompatActivity(), TextWatcher {
     private fun init() {
         utils = Utils(this@EditorActivity, this@EditorActivity)
 
+        val newfile = File(Environment.getExternalStorageDirectory(), "KotlinNote/newfile.txt")
+        if (newfile.exists()) {
+            if (newfile.isFile && newfile.canWrite())
+                currentUri = Uri.fromFile(newfile)
+        }
+        else {
+            utils.touch(newfile)
+        }
+
         val path = utils.getPathFromUri(currentUri)
         toolbar.subtitle = path
 
@@ -148,7 +157,11 @@ class EditorActivity : AppCompatActivity(), TextWatcher {
 
         open_file.setOnClickListener { view ->
             // SAF 呼び出し
-            Snackbar.make(view, "Not Implemented", Snackbar.LENGTH_SHORT).show()
+//            Snackbar.make(view, "Not Implemented", Snackbar.LENGTH_SHORT).show()
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+            intent.addCategory(Intent.CATEGORY_OPENABLE)
+            intent.type = "*/*"
+            startActivityForResult(intent, RequestCodes.OPEN_FILE)
         }
     }
 
