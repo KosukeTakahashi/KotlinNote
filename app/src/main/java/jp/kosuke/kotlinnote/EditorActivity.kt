@@ -128,13 +128,7 @@ class EditorActivity : AppCompatActivity(), TextWatcher {
         utils = Utils(this@EditorActivity, this@EditorActivity)
 
         val newfile = File(Environment.getExternalStorageDirectory(), "KotlinNote/newfile.txt")
-        if (newfile.exists()) {
-            if (newfile.isFile && newfile.canWrite())
-                currentUri = Uri.fromFile(newfile)
-        }
-        else {
-            utils.touch(newfile)
-        }
+        currentUri = Uri.fromFile(utils.touch(newfile))
 
         val path = utils.getPathFromUri(currentUri)
         toolbar.subtitle = path
