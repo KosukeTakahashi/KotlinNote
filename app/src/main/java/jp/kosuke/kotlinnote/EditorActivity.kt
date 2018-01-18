@@ -14,7 +14,6 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 
 import kotlinx.android.synthetic.main.activity_editor.*
 import kotlinx.android.synthetic.main.content_editor.*
@@ -152,6 +151,8 @@ class EditorActivity : AppCompatActivity(), TextWatcher {
         currentLineCount = lines
 
         fab.setOnClickListener { view ->
+            var saved = false
+
             Snackbar.make(view, R.string.msg_confirm_overwrite, Snackbar.LENGTH_SHORT)
                     .setAction(R.string.label_name_to_save, { _ ->
                         val intent = Intent(Intent.ACTION_CREATE_DOCUMENT)
@@ -159,10 +160,11 @@ class EditorActivity : AppCompatActivity(), TextWatcher {
                         intent.putExtra(Intent.EXTRA_TITLE, "untitled.txt")
                         intent.type = "text/*"
                         startActivityForResult(intent, RequestCodes.NAME_TO_SAVE)
+                        saved = true
                     })
                     .addCallback(object: Snackbar.Callback() {
                         override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
-                            if (event != DISMISS_EVENT_SWIPE) {
+                            if (event != DISMISS_EVENT_SWIPE && !saved) {
                                 Log.d(appname, "content: ${editor.text.toString()}")
                                 utils.save(editor.text.toString(), currentUri, currentCharset)
                                 Snackbar.make(view, R.string.msg_saved, Snackbar.LENGTH_SHORT).show()
